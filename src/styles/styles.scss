@@ -71,3 +71,11 @@ a {
 
   }
 }
+
+table.events {
+  th {
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}

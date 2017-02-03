@@ -59,8 +59,13 @@ export default class Event extends Component {
           <div className="row">
             <div className="four columns box solid">Location</div>
             <div className="eight columns box">
-              <Link to={`/events/location/${event.location.country.name}/${event.location.city.name}`}>{event.location.city.name}</Link>, 
-              <Link to={`/events/location/${event.location.country.name}`}>{event.location.country.name}</Link>
+              {event.location
+                ? <div>
+                    <Link to={`/events/location/${event.location.country.name}/${event.location.city.name}`}>{event.location.city.name}</Link>, 
+                    <Link to={`/events/location/${event.location.country.name}`}>{event.location.country.name}</Link>
+                  </div>
+                : "Loading location"
+              }
             </div>
           </div>
           <div className="row">
@@ -73,7 +78,6 @@ export default class Event extends Component {
   }
 
   renderEvent(event) {
-    console.log(event);
     return (
       <div>
         <div className="location-image" style={{ backgroundImage: locationImage(event.geometry.coordinates) }}>
