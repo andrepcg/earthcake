@@ -1,6 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router';
-import '../styles/about-page.css';
+// import '../styles/about-page.css';
 
 const AboutPage = () => {
   return (

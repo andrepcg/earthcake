@@ -1,20 +1,19 @@
-
 import React, { PropTypes } from 'react';
-import { Link, IndexLink } from 'react-router';
 
-class App extends React.Component {
-  render() {
-    return (
-      <div>
-        <IndexLink to="/">Home</IndexLink>
-        {' | '}
-        <Link to="/about">About</Link>
-        <br/>
-        {this.props.children}
+import Header from './Header';
+import NavBar from './NavBar';
+
+const App = ({ children }) => {
+  return (
+    <div>
+      <div className="container">
+        <Header />
+        <NavBar />
       </div>
-    );
-  }
-}
+      {children}
+    </div>
+  );
+};
 
 App.propTypes = {
   children: PropTypes.element
