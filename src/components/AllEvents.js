@@ -40,20 +40,20 @@ export default class AllEvents extends Component {
         <thead>
           <tr>
             <th onClick={() => this.handleColumnClick('time')}>Time {sortColumn === 'time' ? (sortOrder === 'asc' ? '⬆' : '⬇') : ''}</th>
-            <th>Location</th>
             <th onClick={() => this.handleColumnClick('mag')}>Magnitude {sortColumn === 'mag' ? (sortOrder === 'asc' ? '⬆' : '⬇') : ''}</th>
+            <th>ID</th>
             <th>Place</th>
-            <th></th>
+            <th/>
           </tr>
         </thead>
         <tbody>
           { sortedEvents.map((ev) => 
             <tr key={ev.id}>
               <td>{moment(ev.time).format()}</td>
-              <td>{ev.geometry.coordinates}</td>
               <td>{ev.mag}</td>
+              <td>{ev.id}</td>
               <td>{ev.place}</td>
-              <th><Link to={`/events/${ev.id}`}>Go</Link></th>
+              <th><Link to={`/events/${ev.id}`}>Details</Link></th>
             </tr>
           )}
         </tbody>
