@@ -3,19 +3,26 @@ import { Link } from 'react-router';
 import { orderBy } from 'lodash';
 import moment from 'moment';
 
-import { getWeekEvents } from '../actions/events';
+import ReactMapboxGl, { Layer, Feature, Popup, ZoomControl, GeoJSONLayer } from "react-mapbox-gl";
+
+import { getWeekEvents, getAllEvents } from '../actions/events';
+import { MAPBOX_PUBLIC_TOKEN, MAPBOX_SECRET_TOKEN, blurPaint, dotPaint } from '../config';
+import { convertToGeoJson } from '../util/geojson';
 
 const invertDir = (curDir) => curDir === 'asc' ? 'desc' : 'asc';
+
 
 export default class AllEvents extends Component {
   static propTypes = {
     dispatch: PropTypes.func,
-    events:   PropTypes.object
+    events:   PropTypes.object,
+    params:   PropTypes.object
   }
 
   state = {
     sortOrder: 'desc',
-    sortColumn: 'time'
+    sortColumn: 'time',
+    currentTimeframe: 'Week'
   }
 
   componentWillMount() {
@@ -30,11 +37,26 @@ export default class AllEvents extends Component {
     });
   }
 
+  getEventsForTimeframe() {
+    const { events } = this.props;
+    const { currentTimeframe } = this.state;
+
+    let selectedEvents;
+    if (currentTimeframe === "Day")
+      selectedEvents = events.daily.map((event_id) => events.data[event_id]);
+    else if (currentTimeframe === "Week")
+      selectedEvents = events.weekly.map((event_id) => events.data[event_id]);
+    else
+      selectedEvents = events.data;
+
+    return selectedEvents;
+  }
+
   renderTable() {
     const { events } = this.props;
-    const { sortColumn, sortOrder } = this.state;
+    const { sortColumn, sortOrder, currentTimeframe } = this.state;
 
-    const sortedEvents = orderBy(events.data, [sortColumn], [sortOrder]);
+    const sortedEvents = orderBy(this.getEventsForTimeframe(), [sortColumn], [sortOrder]);
     return (
       <table className="u-full-width events">
         <thead>
@@ -61,13 +83,80 @@ export default class AllEvents extends Component {
     );
   }
 
-  render() {
+
+  renderMap() {
+    const { events } = this.props;
+    const ev = this.getEventsForTimeframe();
+    const points = Object.values(ev).map((event) => (
+      <Feature
+        key={event.id}
+        coordinates={event.geometry.coordinates}
+      />
+    ));
+
+    const geoJson = convertToGeoJson(Object.values(ev));
+
     return (
-      <div className="container">
-        <div className="row">
-          <div className="twelve columns">
-            <h2 className="alt-header">All events</h2>
-            {this.renderTable()}
+      <ReactMapboxGl
+        style="mapbox://styles/andrepcg/ciyrpfsw8005m2rplk8ekcz8f"
+        maxZoom={15}
+        accessToken={MAPBOX_PUBLIC_TOKEN}
+        containerStyle={{width: "100vw", height: "400px"}}
+        center={[180, 30]}
+        // maxBounds={maxBounds}
+        zoom={[1]}
+      >
+        <GeoJSONLayer
+          data={geoJson}
+          circlePaint={blurPaint}
+        />
+        <Layer
+          type="circle"
+          id="smalldot"
+          paint={dotPaint}
+        >
+          { points }
+        </Layer>
+      </ReactMapboxGl>
+    );
+  }
+
+  handleTimeframeChange(timeframe) {
+    if (timeframe === "All time") {
+      this.props.dispatch(getAllEvents());
+    }
+    this.setState({ currentTimeframe: timeframe });
+  }
+
+  render() {
+    const { currentTimeframe } = this.state;
+    return (
+      <div>
+        <div className="container">
+          <div className="row">
+            <div className="twelve columns">
+              <div className="timeframe u-pull-right">
+              { ['Day', 'Week', 'All time'].map((t) =>
+                <a
+                  onClick={() => this.handleTimeframeChange(t)}
+                  className={currentTimeframe === t ? 'strong' : ''}
+                >
+                  {t}
+                </a>
+              )}
+              </div>
+              <h2 className="alt-header"><strong>{this.state.currentTimeframe} events</strong></h2>
+            </div>
+          </div>
+        </div>
+
+        {this.renderMap()}
+
+        <div className="container">
+          <div className="row">
+            <div className="twelve columns">
+              {this.renderTable()}
+            </div>
           </div>
         </div>
       </div>

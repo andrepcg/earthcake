@@ -115,7 +115,7 @@ function weekly(state = [], action) {
   return state;
 }
 
-function nearby(state = {}, action) {
+function nearby(state = { isLoading: true }, action) {
   if (action.type === FETCH_NEARBY) {
     return {
       isLoading: true,

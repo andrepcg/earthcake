@@ -1,12 +1,10 @@
 import React, { PropTypes, Component } from 'react';
 import { Link } from 'react-router';
 
-import { MAPBOX_TOKEN } from '../config';
+import { MAPBOX_PUBLIC_TOKEN } from '../config';
 
+import { locationImage } from '../util/geocode';
 import { getEventDetails } from '../actions/events';
-
-const locationImage = (coordinates) =>
-  `url(https://api.mapbox.com/v4/mapbox.satellite/${coordinates[0]},${coordinates[1]},9/1206x268.png?access_token=${mapbox_api})`;
 
 export default class Event extends Component {
 
@@ -80,9 +78,10 @@ export default class Event extends Component {
   }
 
   renderEvent(event) {
+    const geo = event.geometry.coordinates;
     return (
       <div>
-        <div className="location-image" style={{ backgroundImage: locationImage(event.geometry.coordinates) }}>
+        <div className="location-image" style={{ backgroundImage: locationImage({lat: geo[1], lng: geo[0]}) }}>
           <div className="container">
             <div className="row">
               <div className="ten columns">
@@ -101,13 +100,21 @@ export default class Event extends Component {
     );
   }
 
+  renderLoading() {
+    return (
+      <div className="container loading">
+        Loading
+      </div>
+    );
+  }
+
   render() {
     const event = this.getEvent();
 
     return (
       <div className="event">
         { !event || event.isLoading
-          ? "Loading..."
+          ? this.renderLoading()
           : this.renderEvent(event)
         }
       </div>

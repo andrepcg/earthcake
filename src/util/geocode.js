@@ -1,6 +1,13 @@
 import request from 'superagent';
 import { forEach, includes } from 'lodash';
 
+import { MAPBOX_PUBLIC_TOKEN } from '../config';
+
+export function locationImage({lat, lng, zoom = 9}) {
+  return `url(https://api.mapbox.com/v4/mapbox.satellite/${lng},${lat},${zoom}/1206x268.png?access_token=${MAPBOX_PUBLIC_TOKEN})`;
+}
+
+
 export function locationToCoordinates(country, city) {
   const c = city ? `,${city}` : '';
   return request

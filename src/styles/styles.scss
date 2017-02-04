@@ -10,6 +10,7 @@ body {
 a {
   text-decoration: underline;
   color: white;
+  cursor: pointer;
 }
 
 .header {
@@ -78,4 +79,20 @@ table.events {
       cursor: pointer;
     }
   }
+}
+
+.timeframe {
+  a {
+    margin-right: 10px;
+  }
+}
+
+.strong {
+  font-weight: 900;
+}
+
+.loading {
+  font-size: 6rem;
+  font-weight: 900;
+  text-align: center;
 }

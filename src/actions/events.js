@@ -34,6 +34,20 @@ export function getWeekEvents() {
   };
 }
 
+export function getAllEvents() {
+  return function (dispatch) {
+    // dispatch({ type: FETCH_EVENTS });
+    return request
+      .get('http://earthcake.herokuapp.com/api/earthquakes/')
+      .set('Accept', 'application/json')
+      .then(
+        (response) => dispatch({ type: RECEIVE_EVENTS, ...response.body }),
+        (failure) => {
+        }
+      );
+  };
+}
+
 export function getDayEvents() {
   return function (dispatch) {
     dispatch({ type: FETCH_EVENTS });
