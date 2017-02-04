@@ -1,10 +1,12 @@
 import React, { PropTypes, Component } from 'react';
 import { Link } from 'react-router';
 
+import { MAPBOX_TOKEN } from '../config';
+
 import { getEventDetails } from '../actions/events';
 
 const locationImage = (coordinates) =>
-  `url(https://api.mapbox.com/v4/mapbox.satellite/${coordinates[0]},${coordinates[1]},9/1206x268.png?access_token=pk.eyJ1IjoicGV0ZXJxbGl1IiwiYSI6ImpvZmV0UEEifQ._D4bRmVcGfJvo1wjuOpA1g)`;
+  `url(https://api.mapbox.com/v4/mapbox.satellite/${coordinates[0]},${coordinates[1]},9/1206x268.png?access_token=${mapbox_api})`;
 
 export default class Event extends Component {
 
