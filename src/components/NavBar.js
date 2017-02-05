@@ -1,12 +1,13 @@
 import React, { PropTypes } from 'react';
-import { Link, IndexLink } from 'react-router';
+import { Link } from 'react-router';
 
 const NavBar = () => {
   return (
     <div className="row">
       <div className="twelve column">
         <div className="navbar">
-          Navbar
+          <Link to="/events/">Home</Link>
+          <Link to="/events/find">Find</Link>
         </div>
       </div>
     </div>
