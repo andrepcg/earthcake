@@ -22,11 +22,23 @@ export default class AllEvents extends Component {
   state = {
     sortOrder: 'desc',
     sortColumn: 'time',
-    currentTimeframe: 'Week'
+    currentTimeframe: 'Week',
+    filteredEvents: []
   }
 
   componentWillMount() {
     this.props.dispatch(getWeekEvents());
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { currentTimeframe } = this.state;
+    const { events: { data } } = this.props;
+
+    if (Object.keys(data).length !== Object.keys(nextProps.events.data).length) {
+      this.setState({
+        filteredEvents: this.getEventsForTimeframe(currentTimeframe, nextProps.events.data)
+      });
+    }
   }
 
   handleColumnClick(column) {
@@ -37,10 +49,7 @@ export default class AllEvents extends Component {
     });
   }
 
-  getEventsForTimeframe() {
-    const { events } = this.props;
-    const { currentTimeframe } = this.state;
-
+  getEventsForTimeframe(currentTimeframe, data) {
     let timeframe;
     if (currentTimeframe === "Day")
       timeframe = moment().subtract(1, "days");
@@ -51,13 +60,14 @@ export default class AllEvents extends Component {
     else
       timeframe = moment().subtract(1, "years");
 
-    return filter(events.data, ({time}) => time >= timeframe);
+    return filter(data, ({time}) => time >= timeframe);
   }
 
   renderTable() {
-    const { sortColumn, sortOrder } = this.state;
+    const { sortColumn, sortOrder, filteredEvents } = this.state;
 
-    const sortedEvents = orderBy(this.getEventsForTimeframe(), [sortColumn], [sortOrder]);
+    const sortedEvents = orderBy(filteredEvents, [sortColumn], [sortOrder]);
+
     return (
       <table className="u-full-width events">
         <thead>
@@ -86,15 +96,15 @@ export default class AllEvents extends Component {
 
 
   renderMap() {
-    const ev = this.getEventsForTimeframe();
-    const points = Object.values(ev).map((event) => (
+    const { filteredEvents } = this.state;
+    const points = filteredEvents.map((event) => (
       <Feature
         key={event.id}
         coordinates={event.geometry.coordinates}
       />
     ));
 
-    const geoJson = convertToGeoJson(Object.values(ev));
+    const geoJson = convertToGeoJson(filteredEvents);
 
     return (
       <ReactMapboxGl
@@ -122,10 +132,19 @@ export default class AllEvents extends Component {
   }
 
   handleTimeframeChange(timeframe) {
+    const { currentTimeframe } = this.state;
+    const { events } = this.props;
+
     if (timeframe === "All time") {
       this.props.dispatch(getAllEvents());
     }
-    this.setState({ currentTimeframe: timeframe });
+    const newState = { currentTimeframe: timeframe };
+
+    if (timeframe !== currentTimeframe) {
+      newState.filteredEvents = this.getEventsForTimeframe(timeframe, events.data);
+    }
+
+    this.setState(newState);
   }
 
   render() {
@@ -136,8 +155,9 @@ export default class AllEvents extends Component {
           <div className="row">
             <div className="twelve columns">
               <div className="timeframe u-pull-right">
-              { ['Day', 'Week', 'Month', 'All time'].map((t) =>
+              { ['Day', 'Week', 'Month'].map((t) =>
                 <a
+                  key={t}
                   onClick={() => this.handleTimeframeChange(t)}
                   className={currentTimeframe === t ? 'strong' : ''}
                 >
@@ -155,7 +175,7 @@ export default class AllEvents extends Component {
         <div className="container">
           <div className="row">
             <div className="twelve columns">
-              {/*this.renderTable()*/}
+              {this.renderTable()}
             </div>
           </div>
         </div>

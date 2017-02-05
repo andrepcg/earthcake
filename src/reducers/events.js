@@ -61,15 +61,12 @@ function data(state = {}, action) {
     };
   }
 
-  // if (action.type === RECEIVE_NEARBY) {
-  //   return {
-  //     ...state,
-  //     ...action.data.reduce((ac, t) => ({
-  //       ...ac, [t.id]: event(t, action) }),
-  //       {}
-  //     )
-  //   };
-  // }
+  if (action.type === RECEIVE_NEARBY) {
+    return {
+      ...state,
+      ...eventArrayToObject(action.data, action)
+    };
+  }
 
   if (action.type === FETCH_EVENT_DETAILS) {
     return {
@@ -134,26 +131,26 @@ function isLoading(state = true, action) {
 //   return state;
 // }
 
-// function nearby(state = { isLoading: true }, action) {
-//   if (action.type === FETCH_NEARBY) {
-//     return {
-//       isLoading: true,
-//       data: []
-//     };
-//   }
+function nearby(state = { isLoading: true }, action) {
+  if (action.type === FETCH_NEARBY) {
+    return {
+      isLoading: true,
+      data: []
+    };
+  }
 
-//   if (action.type === RECEIVE_NEARBY) {
-//     return {
-//       isLoading: false,
-//       data: action.data.map((e) => e.id)
-//     };
-//   }
+  if (action.type === RECEIVE_NEARBY) {
+    return {
+      isLoading: false,
+      data: action.data.map((e) => e.id)
+    };
+  }
 
-//   return state;
-// }
+  return state;
+}
 
 export default combineReducers({
   isLoading,
-  data
-  // nearby
+  data,
+  nearby
 });

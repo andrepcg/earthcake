@@ -1,4 +1,5 @@
 import React from 'react';
+import Perf from 'react-addons-perf';
 import {render} from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, browserHistory } from 'react-router';
@@ -7,6 +8,10 @@ import configureStore from './store/configureStore';
 require('./favicon.ico');
 import './styles/styles.scss';
 import { syncHistoryWithStore } from 'react-router-redux';
+
+if (process.env.NODE_ENV !== 'production') {
+  window.Perf = Perf;
+}
 
 const store = configureStore();
 
