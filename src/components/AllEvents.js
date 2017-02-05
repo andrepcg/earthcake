@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
-import { orderBy } from 'lodash';
+import { orderBy, filter } from 'lodash';
 import moment from 'moment';
 
 import ReactMapboxGl, { Layer, Feature, Popup, GeoJSONLayer } from "react-mapbox-gl";
@@ -41,15 +41,17 @@ export default class AllEvents extends Component {
     const { events } = this.props;
     const { currentTimeframe } = this.state;
 
-    let selectedEvents;
+    let timeframe;
     if (currentTimeframe === "Day")
-      selectedEvents = events.daily.map((event_id) => events.data[event_id]);
+      timeframe = moment().subtract(1, "days");
     else if (currentTimeframe === "Week")
-      selectedEvents = events.weekly.map((event_id) => events.data[event_id]);
+      timeframe = moment().subtract(1, "weeks");
+    else if (currentTimeframe === "Month")
+      timeframe = moment().subtract(1, "months");
     else
-      selectedEvents = events.data;
+      timeframe = moment().subtract(1, "years");
 
-    return selectedEvents;
+    return filter(events.data, ({time}) => time >= timeframe);
   }
 
   renderTable() {
@@ -134,7 +136,7 @@ export default class AllEvents extends Component {
           <div className="row">
             <div className="twelve columns">
               <div className="timeframe u-pull-right">
-              { ['Day', 'Week', 'All time'].map((t) =>
+              { ['Day', 'Week', 'Month', 'All time'].map((t) =>
                 <a
                   onClick={() => this.handleTimeframeChange(t)}
                   className={currentTimeframe === t ? 'strong' : ''}
@@ -153,7 +155,7 @@ export default class AllEvents extends Component {
         <div className="container">
           <div className="row">
             <div className="twelve columns">
-              {this.renderTable()}
+              {/*this.renderTable()*/}
             </div>
           </div>
         </div>

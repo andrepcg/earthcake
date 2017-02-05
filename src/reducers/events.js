@@ -45,26 +45,31 @@ function event(state = {}, action) {
   return state;
 }
 
+function eventArrayToObject(array, action) {
+  const obj = {};
+  array.forEach((e) => {
+    obj[e.id] = event(e, action);
+  });
+  return obj;
+}
+
 function data(state = {}, action) {
   if (action.type === RECEIVE_EVENTS) {
     return {
       ...state,
-      ...action.data.reduce((ac, t) => ({
-        ...ac, [t.id]: event({ ...state[t.id], ...t }, action) }),
-        {}
-      )
+      ...eventArrayToObject(action.data, action)
     };
   }
 
-  if (action.type === RECEIVE_NEARBY || action.type === RECEIVE_EVENT_NEARBY) {
-    return {
-      ...state,
-      ...action.data.reduce((ac, t) => ({
-        ...ac, [t.id]: event(t, action) }),
-        {}
-      )
-    };
-  }
+  // if (action.type === RECEIVE_NEARBY) {
+  //   return {
+  //     ...state,
+  //     ...action.data.reduce((ac, t) => ({
+  //       ...ac, [t.id]: event(t, action) }),
+  //       {}
+  //     )
+  //   };
+  // }
 
   if (action.type === FETCH_EVENT_DETAILS) {
     return {
@@ -103,31 +108,31 @@ function isLoading(state = true, action) {
   return state;
 }
 
-const startOfDay = moment().startOf('day');
-const startOfWeek = moment().startOf('week');
+// const startOfDay = moment().startOf('day');
+// const startOfWeek = moment().startOf('week');
 
-function daily(state = [], action) {
-  if (action.type === RECEIVE_EVENTS) {
-    return [
-      ...filter(action.data,
-        (e) => moment(e.time).isAfter(startOfDay)
-      ).map((e) => e.id)
-    ];
-  }
+// function daily(state = [], action) {
+//   if (action.type === RECEIVE_EVENTS) {
+//     return [
+//       ...filter(action.data,
+//         (e) => moment(e.time).isAfter(startOfDay)
+//       ).map((e) => e.id)
+//     ];
+//   }
 
-  return state;
-}
+//   return state;
+// }
 
-function weekly(state = [], action) {
-  if (action.type === RECEIVE_EVENTS) {
-    return [
-      ...filter(action.data,
-        (e) => moment(e.time).isAfter(startOfWeek)
-      ).map((e) => e.id)
-    ];
-  }
-  return state;
-}
+// function weekly(state = [], action) {
+//   if (action.type === RECEIVE_EVENTS) {
+//     return [
+//       ...filter(action.data,
+//         (e) => moment(e.time).isAfter(startOfWeek)
+//       ).map((e) => e.id)
+//     ];
+//   }
+//   return state;
+// }
 
 // function nearby(state = { isLoading: true }, action) {
 //   if (action.type === FETCH_NEARBY) {
@@ -149,8 +154,6 @@ function weekly(state = [], action) {
 
 export default combineReducers({
   isLoading,
-  data,
-  daily,
-  weekly
+  data
   // nearby
 });
