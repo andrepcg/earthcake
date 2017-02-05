@@ -27,9 +27,7 @@ export function getWeekEvents() {
     dispatch({ type: FETCH_EVENTS });
     getEarthquakes({ since: startOfWeek.unix() })
       .then(
-        (response) => dispatch({ type: RECEIVE_EVENTS, ...response.body }),
-        (failure) => {
-        }
+        (response) => dispatch({ type: RECEIVE_EVENTS, ...response.body })
       );
   };
 }
@@ -41,9 +39,7 @@ export function getAllEvents() {
       .get('http://earthcake.herokuapp.com/api/earthquakes/')
       .set('Accept', 'application/json')
       .then(
-        (response) => dispatch({ type: RECEIVE_EVENTS, ...response.body }),
-        (failure) => {
-        }
+        (response) => dispatch({ type: RECEIVE_EVENTS, ...response.body })
       );
   };
 }
@@ -53,9 +49,7 @@ export function getDayEvents() {
     dispatch({ type: FETCH_EVENTS });
     getEarthquakes({ since: startOfDay.unix() })
       .then(
-        (response) => dispatch({ type: RECEIVE_EVENTS, ...response.body }),
-        (failure) => {
-        }
+        (response) => dispatch({ type: RECEIVE_EVENTS, ...response.body })
       );
   };
 }
@@ -96,9 +90,7 @@ export function getNearby(coordinates, radius) {
       .set('Accept', 'application/json')
       .query({ lat: coordinates[0], long: coordinates[1], radius })
       .then(
-        (response) => dispatch({ type: RECEIVE_NEARBY, ...response.body }),
-        (failure) => {
-        }
+        (response) => dispatch({ type: RECEIVE_NEARBY, ...response.body })
       );
   };
 }

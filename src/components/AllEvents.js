@@ -3,10 +3,10 @@ import { Link } from 'react-router';
 import { orderBy } from 'lodash';
 import moment from 'moment';
 
-import ReactMapboxGl, { Layer, Feature, Popup, ZoomControl, GeoJSONLayer } from "react-mapbox-gl";
+import ReactMapboxGl, { Layer, Feature, Popup, GeoJSONLayer } from "react-mapbox-gl";
 
 import { getWeekEvents, getAllEvents } from '../actions/events';
-import { MAPBOX_PUBLIC_TOKEN, MAPBOX_SECRET_TOKEN, blurPaint, dotPaint } from '../config';
+import { MAPBOX_PUBLIC_TOKEN, blurPaint, dotPaint } from '../config';
 import { convertToGeoJson } from '../util/geojson';
 
 const invertDir = (curDir) => curDir === 'asc' ? 'desc' : 'asc';
@@ -53,8 +53,7 @@ export default class AllEvents extends Component {
   }
 
   renderTable() {
-    const { events } = this.props;
-    const { sortColumn, sortOrder, currentTimeframe } = this.state;
+    const { sortColumn, sortOrder } = this.state;
 
     const sortedEvents = orderBy(this.getEventsForTimeframe(), [sortColumn], [sortOrder]);
     return (
@@ -85,7 +84,6 @@ export default class AllEvents extends Component {
 
 
   renderMap() {
-    const { events } = this.props;
     const ev = this.getEventsForTimeframe();
     const points = Object.values(ev).map((event) => (
       <Feature

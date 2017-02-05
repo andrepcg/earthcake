@@ -1,8 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import { getWeekEvents } from '../actions/events';
-import { coordinatesToLocation } from '../util/geocode';
+// import { getWeekEvents } from '../actions/events';
 
 @connect(({ events }) => ({
   events
@@ -11,11 +10,8 @@ export default class Events extends Component {
 
   static propTypes = {
     dispatch: PropTypes.func,
-    children: PropTypes.node
-  }
-
-  componentWillMount() {
-    // coordinatesToLocation(40.2033145, -8.41025730).then(res => console.log(res));
+    children: PropTypes.node,
+    events:   PropTypes.object
   }
 
   render() {

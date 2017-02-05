@@ -1,8 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import { Link } from 'react-router';
 
-import { MAPBOX_PUBLIC_TOKEN } from '../config';
-
 import { locationImage } from '../util/geocode';
 import { getEventDetails } from '../actions/events';
 
