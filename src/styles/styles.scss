@@ -1,9 +1,11 @@
 @import "skeleton.css";
 @import url('https://fonts.googleapis.com/css?family=Kalam:700');
 
+$red: #FF5252;
+
 body {
   margin-top: 30px;
-  background-color: #FF5252;
+  background-color: $red;
   color: white;
 }
 
@@ -24,6 +26,22 @@ a {
 
 .navbar {
   margin-bottom: 50px;
+  text-align: center;
+  
+  .button {
+    border: 3px solid white;
+    padding: 8px;
+    border-radius: 0;
+    color: white;
+    margin: 0px 20px;
+    line-height: 2rem;
+    width: 10rem;
+
+    &:hover {
+      background-color: white;
+      color: $red;
+    }
+  }
 }
 
 .box {
@@ -33,7 +51,7 @@ a {
   
   &.solid {
     background-color: white;
-    color: #FF5252;
+    color: $red;
     font-size: 3rem;
     line-height: 3rem;
     text-align: center;

@@ -6,8 +6,8 @@ const NavBar = () => {
     <div className="row">
       <div className="twelve column">
         <div className="navbar">
-          <Link to="/events/">Home</Link>
-          <Link to="/events/find">Find</Link>
+          <Link to="/events/" className="button">Home</Link>
+          <Link to="/events/find" className="button">Find</Link>
         </div>
       </div>
     </div>
