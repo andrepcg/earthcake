@@ -1,16 +1,16 @@
 import { combineReducers } from 'redux';
-import { pick, filter } from 'lodash';
-import moment from 'moment';
+import { pick } from 'lodash';
 
 import {
   FETCH_EVENTS,
   RECEIVE_EVENTS,
   RECEIVE_EVENT_NEARBY,
-  FETCH_EVENT_NEARBY,
+  // FETCH_EVENT_NEARBY,
   FETCH_EVENT_DETAILS,
   RECEIVE_EVENT_DETAILS,
   RECEIVE_NEARBY,
-  FETCH_NEARBY
+  FETCH_NEARBY,
+  CLEAR_NEARBY
 } from '../actions/events';
 
 function event(state = {}, action) {
@@ -105,34 +105,8 @@ function isLoading(state = true, action) {
   return state;
 }
 
-// const startOfDay = moment().startOf('day');
-// const startOfWeek = moment().startOf('week');
-
-// function daily(state = [], action) {
-//   if (action.type === RECEIVE_EVENTS) {
-//     return [
-//       ...filter(action.data,
-//         (e) => moment(e.time).isAfter(startOfDay)
-//       ).map((e) => e.id)
-//     ];
-//   }
-
-//   return state;
-// }
-
-// function weekly(state = [], action) {
-//   if (action.type === RECEIVE_EVENTS) {
-//     return [
-//       ...filter(action.data,
-//         (e) => moment(e.time).isAfter(startOfWeek)
-//       ).map((e) => e.id)
-//     ];
-//   }
-//   return state;
-// }
-
-function nearby(state = { isLoading: true }, action) {
-  if (action.type === FETCH_NEARBY) {
+function nearby(state = { isLoading: true, data: [] }, action) {
+  if (action.type === FETCH_NEARBY || action.type === CLEAR_NEARBY) {
     return {
       isLoading: true,
       data: []
@@ -145,7 +119,7 @@ function nearby(state = { isLoading: true }, action) {
       data: action.data.map((e) => e.id)
     };
   }
-
+  
   return state;
 }
 

@@ -44,7 +44,7 @@ export default class Event extends Component {
           </div>
           <div className="row">
             <div className="four columns box solid">Tsunami</div>
-            <div className="eight columns box">{event.tsunami}</div>
+            <div className="eight columns box">{event.tsunami ? "Yes" : "No"}</div>
           </div>
           <div className="row">
             <div className="four columns box solid">Felt</div>
@@ -108,10 +108,9 @@ export default class Event extends Component {
 
   render() {
     const event = this.getEvent();
-
     return (
       <div className="event">
-        { !event || event.isLoading
+        { !event || event.isLoading || !event.detail
           ? this.renderLoading()
           : this.renderEvent(event)
         }

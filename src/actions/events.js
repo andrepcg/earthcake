@@ -11,6 +11,7 @@ export const FETCH_EVENT_NEARBY = "FETCH_EVENT_NEARBY";
 export const RECEIVE_EVENT_NEARBY = "RECEIVE_EVENT_NEARBY";
 export const FETCH_NEARBY = "FETCH_NEARBY";
 export const RECEIVE_NEARBY = "RECEIVE_NEARBY";
+export const CLEAR_NEARBY = "CLEAR_NEARBY";
 
 function getEarthquakes(params) {
   return request
@@ -82,15 +83,19 @@ export function getEventNearby(eventId) {
   };
 }
 
-export function getNearby(coordinates, radius) {
+export function getNearby(lat, long, radius) {
   return function (dispatch) {
     dispatch({ type: FETCH_NEARBY });
     request
       .get('http://earthcake.herokuapp.com/api/earthquakes/findByCoords')
       .set('Accept', 'application/json')
-      .query({ lat: coordinates[0], long: coordinates[1], radius })
+      .query({ lat, long, radius })
       .then(
         (response) => dispatch({ type: RECEIVE_NEARBY, ...response.body })
       );
   };
+}
+
+export function clearNearby() {
+  return { type: CLEAR_NEARBY };
 }

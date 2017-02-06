@@ -2,8 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import { orderBy, filter } from 'lodash';
 import moment from 'moment';
+import ReactList from 'react-list';
 
-import ReactMapboxGl, { Layer, Feature, Popup, GeoJSONLayer } from "react-mapbox-gl";
+import ReactMapboxGl, { Layer, Feature, GeoJSONLayer } from "react-mapbox-gl";
 
 import { getWeekEvents, getAllEvents } from '../actions/events';
 import { MAPBOX_PUBLIC_TOKEN, blurPaint, dotPaint } from '../config';
@@ -16,29 +17,18 @@ export default class AllEvents extends Component {
   static propTypes = {
     dispatch: PropTypes.func,
     events:   PropTypes.object,
-    params:   PropTypes.object
+    params:   PropTypes.object,
+    router:   PropTypes.object
   }
 
   state = {
     sortOrder: 'desc',
     sortColumn: 'time',
-    currentTimeframe: 'Week',
-    filteredEvents: []
+    currentTimeframe: 'Week'
   }
 
   componentWillMount() {
     this.props.dispatch(getWeekEvents());
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { currentTimeframe } = this.state;
-    const { events: { data } } = this.props;
-
-    if (Object.keys(data).length !== Object.keys(nextProps.events.data).length) {
-      this.setState({
-        filteredEvents: this.getEventsForTimeframe(currentTimeframe, nextProps.events.data)
-      });
-    }
   }
 
   handleColumnClick(column) {
@@ -63,48 +53,59 @@ export default class AllEvents extends Component {
     return filter(data, ({time}) => time >= timeframe);
   }
 
-  renderTable() {
-    const { sortColumn, sortOrder, filteredEvents } = this.state;
+  renderTable(events) {
+    const { sortColumn, sortOrder } = this.state;
 
-    const sortedEvents = orderBy(filteredEvents, [sortColumn], [sortOrder]);
+    const sortedEvents = orderBy(events, [sortColumn], [sortOrder]);
+
+    const renderItem = (index, key) => {
+      const ev = sortedEvents[index];
+      return (
+        <div key={key} className="row">
+          <div className="three columns">{moment(ev.time).format()}</div>
+          <div className="two columns">{ev.mag || "Unavailable"}</div>
+          <div className="five columns">{ev.place}</div>
+          <div className="two columns"><Link to={`/events/${ev.id}`}>Details</Link></div>
+        </div>
+      );
+    }
 
     return (
-      <table className="u-full-width events">
-        <thead>
-          <tr>
-            <th onClick={() => this.handleColumnClick('time')}>Time {sortColumn === 'time' ? (sortOrder === 'asc' ? '⬆' : '⬇') : ''}</th>
-            <th onClick={() => this.handleColumnClick('mag')}>Magnitude {sortColumn === 'mag' ? (sortOrder === 'asc' ? '⬆' : '⬇') : ''}</th>
-            <th>ID</th>
-            <th>Place</th>
-            <th/>
-          </tr>
-        </thead>
-        <tbody>
-          { sortedEvents.map((ev) => 
-            <tr key={ev.id}>
-              <td>{moment(ev.time).format()}</td>
-              <td>{ev.mag}</td>
-              <td>{ev.id}</td>
-              <td>{ev.place}</td>
-              <th><Link to={`/events/${ev.id}`}>Details</Link></th>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      <div className="events-table">
+        <div className="row header">
+          <div className="three columns" onClick={() => this.handleColumnClick('time')}>Time {sortColumn === 'time' ? (sortOrder === 'asc' ? '⬆' : '⬇') : ''}</div>
+          <div className="two columns" onClick={() => this.handleColumnClick('mag')}>Magnitude {sortColumn === 'mag' ? (sortOrder === 'asc' ? '⬆' : '⬇') : ''}</div>
+          <div className="five columns">Place</div>
+          <div className="two columns"/>
+        </div>
+        <ReactList
+          itemRenderer={renderItem}
+          length={sortedEvents.length}
+          type='uniform'
+        />
+      </div>
     );
   }
 
 
-  renderMap() {
-    const { filteredEvents } = this.state;
-    const points = filteredEvents.map((event) => (
+  renderMap(events) {
+    const { router } = this.props;
+
+    const handleOnHover = ({ map }, cursor) => {
+      map.getCanvas().style.cursor = cursor;
+    }
+
+    const points = events.map((event) => (
       <Feature
         key={event.id}
         coordinates={event.geometry.coordinates}
+        onClick={() => router.push(`/events/${event.id}`)}
+        onHover={(o) => handleOnHover(o, "pointer")}
+        onEndHover={(o) => handleOnHover(o, "")}
       />
     ));
 
-    const geoJson = convertToGeoJson(filteredEvents);
+    const geoJson = convertToGeoJson(events);
 
     return (
       <ReactMapboxGl
@@ -132,23 +133,17 @@ export default class AllEvents extends Component {
   }
 
   handleTimeframeChange(timeframe) {
-    const { currentTimeframe } = this.state;
-    const { events } = this.props;
-
     if (timeframe === "All time") {
       this.props.dispatch(getAllEvents());
     }
-    const newState = { currentTimeframe: timeframe };
-
-    if (timeframe !== currentTimeframe) {
-      newState.filteredEvents = this.getEventsForTimeframe(timeframe, events.data);
-    }
-
-    this.setState(newState);
+    this.setState({ currentTimeframe: timeframe });
   }
 
   render() {
     const { currentTimeframe } = this.state;
+
+    const events = this.getEventsForTimeframe(currentTimeframe, this.props.events.data);
+
     return (
       <div>
         <div className="container">
@@ -170,14 +165,10 @@ export default class AllEvents extends Component {
           </div>
         </div>
 
-        {this.renderMap()}
+        {this.renderMap(events)}
 
         <div className="container">
-          <div className="row">
-            <div className="twelve columns">
-              {this.renderTable()}
-            </div>
-          </div>
+          {this.renderTable(events)}
         </div>
       </div>
     );

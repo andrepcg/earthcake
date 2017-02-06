@@ -2,13 +2,9 @@ import React, { PropTypes, Component } from 'react';
 import { Link } from 'react-router';
 
 import { locationToCoordinates, locationImage } from '../util/geocode';
-import { getNearby } from '../actions/events';
+
 
 import moment from 'moment';
-
-const cityRadius = 100 * 1000; // km
-const countryRadius = 1000 * 1000; // km
-
 
 export default class Location extends Component {
 
@@ -19,10 +15,9 @@ export default class Location extends Component {
   }
 
   componentWillMount() {
-    const { params: { country, city }, dispatch } = this.props;
+    const { params: { country, city } } = this.props;
     locationToCoordinates(country, city).then((geo) => {
       this.setState({ geo });
-      dispatch(getNearby(geo.coordinates, city ? cityRadius : countryRadius));
     });
 
   }

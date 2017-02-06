@@ -114,3 +114,23 @@ table.events {
   font-weight: 900;
   text-align: center;
 }
+
+.events-table {
+  margin-top: 50px;
+  margin-bottom: 100px;
+  line-height: 5rem;
+  overflow: auto;
+  max-height: 600px;
+
+  .header {
+    @extend .strong;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .row {
+    height: 50px;
+    border-bottom: 2px solid white;
+  }
+}
