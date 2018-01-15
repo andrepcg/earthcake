@@ -15,7 +15,7 @@ export const CLEAR_NEARBY = "CLEAR_NEARBY";
 
 function getEarthquakes(params) {
   return request
-    .get('http://earthcake.herokuapp.com/api/earthquakes/find')
+    .get('//earthcake.herokuapp.com/api/earthquakes/find')
     .set('Accept', 'application/json')
     .query(params);
 }
@@ -37,7 +37,7 @@ export function getAllEvents() {
   return function (dispatch) {
     // dispatch({ type: FETCH_EVENTS });
     return request
-      .get('http://earthcake.herokuapp.com/api/earthquakes/')
+      .get('//earthcake.herokuapp.com/api/earthquakes/')
       .set('Accept', 'application/json')
       .then(
         (response) => dispatch({ type: RECEIVE_EVENTS, ...response.body })
@@ -60,7 +60,7 @@ export function getEventDetails(eventId) {
   return function (dispatch) {
     dispatch({ type: FETCH_EVENT_DETAILS, eventId });
     return request
-      .get('http://earthcake.herokuapp.com/api/earthquakes/' + eventId)
+      .get('//earthcake.herokuapp.com/api/earthquakes/' + eventId)
       .set('Accept', 'application/json')
       .then((response) => {
         dispatch({ type: RECEIVE_EVENT_DETAILS, ...response.body });
@@ -77,7 +77,7 @@ export function getEventNearby(eventId) {
   return function (dispatch) {
     dispatch({ type: FETCH_EVENT_NEARBY, eventId });
     request
-      .get(`http://earthcake.herokuapp.com/api/earthquakes/${eventId}/nearby`)
+      .get(`//earthcake.herokuapp.com/api/earthquakes/${eventId}/nearby`)
       .set('Accept', 'application/json')
       .then((response) => dispatch({ type: RECEIVE_EVENT_NEARBY, ...response.body }));
   };
@@ -87,7 +87,7 @@ export function getNearby(lat, long, radius) {
   return function (dispatch) {
     dispatch({ type: FETCH_NEARBY });
     request
-      .get('http://earthcake.herokuapp.com/api/earthquakes/findByCoords')
+      .get('//earthcake.herokuapp.com/api/earthquakes/findByCoords')
       .set('Accept', 'application/json')
       .query({ lat, long, radius })
       .then(
